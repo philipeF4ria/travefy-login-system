@@ -1,8 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Link, useHistory } from 'react-router-dom';
+import { Form } from '@unform/web';
+import * as Yup from 'yup';
 
 import api from '../../services/api';
 
+import Input from '../../components/Input';
 import Button from '../../components/Button';
 
 import {
@@ -11,7 +14,6 @@ import {
 	Title,
 	FormAreaContainer,
 	TextFormArea,
-	Form,
 	BackToLoginText,
 	Error,
 } from './styles';
@@ -19,37 +21,34 @@ import {
 const Register = () => {
 	const history = useHistory();
 
-	const [formData, setFormData] = useState({
-		name: '',
-		email: '',
-		password: '',
-	});
 	const [inputError, setInputError] = useState('');
 
-	function handleInputChange(event) {
-		const { name, value } = event.target;
+	const handleSubmit = useCallback(
+		async (data) => {
+			try {
+				const schema = Yup.object({
+					name: Yup.string().required('Name is required'),
+					email: Yup.string()
+						.required('Email is required')
+						.email('Submit a valid email'),
+					password: Yup.string().min(6, 'At least 6 digits'),
+				});
 
-		setFormData({ ...formData, [name]: value });
-	}
+				await schema.validate(data, {
+					abortEarly: false,
+				});
 
-	async function handleSubmit(event) {
-		const { name, email, password } = formData;
+				const { name, email, password } = data;
 
-		if (!name || !email || !password) {
-			setInputError('It is necessary to enter the data.');
-			return;
-		}
+				await api.post('/users', { name, email, password });
 
-		try {
-			event.preventDefault();
-
-			await api.post('/users', formData);
-			setInputError('');
-			history.push('/');
-		} catch (err) {
-			setInputError('Register failed. Try again later.');
-		}
-	}
+				history.push('/');
+			} catch (err) {
+				setInputError('An error has occurred');
+			}
+		},
+		[history],
+	);
 
 	return (
 		<Container>
@@ -63,33 +62,17 @@ const Register = () => {
 				<TextFormArea>
 					Create your <strong>account</strong>
 				</TextFormArea>
-				<Form hasError={!!inputError}>
-					<input
-						name="name"
-						type="text"
-						placeholder="Name"
-						onChange={handleInputChange}
-					/>
+				<Form onSubmit={handleSubmit}>
+					<Input name="name" type="text" placeholder="Name" />
 
-					<input
-						name="email"
-						type="text"
-						placeholder="Email Address"
-						onChange={handleInputChange}
-					/>
+					<Input name="email" type="text" placeholder="Email Address" />
 
-					<input
-						name="password"
-						type="password"
-						placeholder="Password"
-						onChange={handleInputChange}
-					/>
+					<Input name="password" type="password" placeholder="Password" />
+
+					<Button type="submit">Done</Button>
+
+					{inputError && <Error>{inputError}</Error>}
 				</Form>
-				<Button type="submit" onClick={handleSubmit}>
-					Done
-				</Button>
-
-				{inputError && <Error>{inputError}</Error>}
 
 				<Link to="/">
 					<BackToLoginText>Back to Login</BackToLoginText>

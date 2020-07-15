@@ -1,8 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import { Link } from 'react-router-dom';
+import { Form } from '@unform/web';
+import * as Yup from 'yup';
 
 import api from '../../services/api';
 
+import Input from '../../components/Input';
 import Button from '../../components/Button';
 
 import {
@@ -12,41 +15,34 @@ import {
 	Description,
 	LoginAreaContainer,
 	TextLoginArea,
-	Form,
 	RegisterText,
 	Error,
 } from './styles';
 
 const Login = () => {
-	const [formData, setFormData] = useState({
-		email: '',
-		password: '',
-	});
+	const formRef = useRef(null);
 	const [inputError, setInputError] = useState('');
 
-	function handleInputChange(event) {
-		const { name, value } = event.target;
-
-		setFormData({ ...formData, [name]: value });
-	}
-
-	async function handleSubmit(event) {
-		const { email, password } = formData;
-
-		if (!email || !password) {
-			setInputError('It is necessary to enter the data.');
-			return;
-		}
-
+	const handleSubmit = useCallback(async (data) => {
 		try {
-			event.preventDefault();
+			const schema = Yup.object({
+				email: Yup.string()
+					.required('Email is required')
+					.email('Submit a valid email'),
+				password: Yup.string().required('Password is required'),
+			});
 
-			await api.post('/sessions', formData);
-			setInputError('');
+			await schema.validate(data, {
+				abortEarly: false,
+			});
+
+			const { email, password } = data;
+
+			await api.post('/sessions', { email, password });
 		} catch (err) {
 			setInputError('Login failed. Try again later.');
 		}
-	}
+	}, []);
 
 	return (
 		<Container>
@@ -63,25 +59,15 @@ const Login = () => {
 				<TextLoginArea>
 					Login to your <strong>account</strong>
 				</TextLoginArea>
-				<Form hasError={!!inputError}>
-					<input
-						name="email"
-						type="text"
-						placeholder="Email Address"
-						onChange={handleInputChange}
-					/>
-					<input
-						name="password"
-						type="password"
-						placeholder="Password"
-						onChange={handleInputChange}
-					/>
-				</Form>
-				<Button type="submit" onClick={handleSubmit}>
-					Login
-				</Button>
 
-				{inputError && <Error>{inputError}</Error>}
+				<Form ref={formRef} onSubmit={handleSubmit}>
+					<Input name="email" type="text" placeholder="Email" />
+					<Input name="password" type="password" placeholder="Password" />
+
+					<Button type="submit">Login</Button>
+
+					{inputError && <Error>{inputError}</Error>}
+				</Form>
 
 				<Link to="/register">
 					<RegisterText>Create a free account</RegisterText>

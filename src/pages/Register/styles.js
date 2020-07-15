@@ -1,4 +1,4 @@
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 
 import registerBackground from '../../assets/register-background.svg';
 
@@ -43,6 +43,14 @@ export const FormAreaContainer = styled.div`
 	margin: 40px 54px 0 0;
 	padding: 28px;
 
+	form {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+
+		width: 320px;
+	}
+
 	a {
 		text-decoration: none;
 		margin-top: 40px;
@@ -61,36 +69,6 @@ export const TextFormArea = styled.h1`
 	strong {
 		font-weight: 400;
 		color: #29a0d3;
-	}
-`;
-
-export const Form = styled.div`
-	display: flex;
-	flex-direction: column;
-
-	input {
-		width: 300px;
-		height: 50px;
-		border: 1px solid #636262;
-		padding: 10px;
-		background: #fff;
-		color: #3f3c3c;
-		border-radius: 5px 5px 0 0;
-
-		& + input {
-			border-top: 0;
-			border-radius: 0 0 0 0;
-
-			& + input {
-				border-radius: 0 0 5px 5px;
-			}
-		}
-
-		${(props) =>
-			props.hasError &&
-			css`
-				border-color: #ff391f;
-			`}
 	}
 `;
 
