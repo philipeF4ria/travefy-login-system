@@ -2,12 +2,12 @@
 
 Esta aplicação foi desenvolvida com o intuito de colocar em prática ReactJS e tecnologias correlatas.
 
-![loginpage](https://user-images.githubusercontent.com/60238162/86835816-0a039380-c073-11ea-921c-958254e07a83.png)
+![loginpage_dois](https://user-images.githubusercontent.com/60238162/87577102-c4fde380-c6a8-11ea-8eac-94b26992360a.png)
 > Página de login
 
 A aplicação consome a [API Rest](https://github.com/philipeF4ria/login-system-backend) e permite fazer cadastro ou login de usuário em uma plataforma para organizar viagens.
 
-![registerpage](https://user-images.githubusercontent.com/60238162/86836241-99a94200-c073-11ea-88b5-9655ae4a5532.png)
+![registerpage_dois](https://user-images.githubusercontent.com/60238162/87577187-e2cb4880-c6a8-11ea-86c9-ab408c3593f1.png)
 > Página de cadastro
 
 #### Tecnologias utilizadas ####
@@ -15,7 +15,9 @@ A aplicação consome a [API Rest](https://github.com/philipeF4ria/login-system-
 1) Javascript
 2) ReactJS
 3) Styled Components
-4) Axios
+4) Axios, para consumir a API
+5) Unform, para lidar com formulários
+6) Yup, para fazer a validação dos formulários
 
 #### Como executar a aplicação ####
 
